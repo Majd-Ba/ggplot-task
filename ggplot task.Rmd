@@ -1,0 +1,124 @@
+---
+title: "ggplot task"
+output: pdf_document
+date: "2024-11-26"
+author: "Majd Bairkdar
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r Boxplot with Violins}
+#Import data
+library(readr)
+data_plot1 <- read_csv("C:/Users/majbai/Downloads/data_plot1.csv") # change path to your path
+View(data_plot1)
+
+# the plot
+ggplot(data_plot1, aes(x = name, y = value, fill=name)) + 
+  geom_violin() +
+  geom_boxplot(colour = "black", width=0.1, outliers = FALSE) +
+  labs(x = '', y = 'Value', title = 'Boxplot + Violin')  +
+  theme(panel.grid.major = element_line(colour = "lightgrey"), panel.background = element_rect(fill = NA),
+        panel.border = element_rect(linetype = "solid", fill = NA),
+        legend.position = 'none')
+
+```
+
+
+```{r Simple Scatter Plot}
+library(readr)
+data_plot2 <- read_csv("C:/Users/majbai/Downloads/data_plot2.csv") # change path to your path
+View(data_plot2)
+
+#the plot
+ggplot(data_plot2, aes(x = area, y = poptotal, colour = state, size=popdensity)) +
+  geom_point() + scale_y_continuous(labels= function (x) format(x, scientific=F)) +
+  labs(x = 'Area', y = 'Population', title = 'Scatterplot
+Area vs Population') +
+  theme(panel.grid.minor = element_line(colour = "lightgrey"), panel.grid.major = element_line(colour = "lightgrey"), 
+        panel.background = element_rect(fill = NA),
+        panel.border = element_rect(linetype = "solid", fill = NA),  legend.position = "right") +
+  xlim(0, 0.100) +
+  scale_y_continuous(labels = function(x) format(x, scientific = FALSE), limits = c(0, 500000)) +
+  geom_smooth(aes(group = 1), method = "loess", se=FALSE, show.legend = FALSE)
+
+```
+
+```{r Counts plot}
+library(readr)
+data_plot3 <- read_csv("C:/Users/majbai/Downloads/data_plot3.csv")# change path to your path
+View(data_plot3)
+
+#the plot
+ggplot(data_plot3, aes(x = cty, y = hwy)) +
+  geom_count(color = "red") + scale_size(range = c(4, 7)) +
+  labs(title = 'Counts plot
+mpg: city vs highway mileage') +
+  theme(panel.grid.minor = element_line(colour = "lightgrey"), panel.grid.major = element_line(colour = "lightgrey"), 
+        panel.background = element_rect(fill = NA),
+        panel.border = element_rect(linetype = "solid", fill = NA),  legend.position = "none")
+```
+
+
+```{r Divergent Plot}
+library(readr)
+data_plot4 <- read_csv("C:/Users/majbai/Downloads/data_plot4.csv") # change path to your path
+View(data_plot4)
+
+#data manipulation first
+# Calculate mean and standard deviation
+mean <- mean(data_plot4$mpg)
+sd <- sd(data_plot4$mpg)
+
+# Calculate z-scores
+modified_data_plot4 <- data_plot4 %>% mutate(z.score= (mpg - mean) / sd)
+
+# Color based on z score value
+modified_data_plot4$z.score2 <- ifelse(modified_data_plot4$z.score < 0, "negative", "positive")
+
+
+ggplot(modified_data_plot4,aes(x=reorder(car_name, z.score), y=z.score))+
+  geom_bar(stat='identity', width=0.8, aes(fill=z.score2)) + coord_flip() +
+  theme(panel.grid.minor = element_line(colour = "lightgrey"), panel.grid.major = element_line(colour = "lightgrey"), 
+        panel.background = element_rect(fill = NA),
+        panel.border = element_rect(linetype = "solid", fill = NA)) +
+  labs(y = "MPG (Z-score)", x = "Car Name") +
+  scale_fill_manual(name="Mileage", labels = c("Below Average", "Above Average"), values = c("positive"="green", "negative"="red"))
+```
+
+
+```{r Lollipop Plot}
+library(readr)
+data_plot5 <- read_csv("C:/Users/majbai/Downloads/data_plot5.csv") # change path to your path
+View(data_plot5)
+
+# The Plot
+ggplot(data_plot5, aes(x=reorder(manufacturer, mileage), y=mileage)) +
+  geom_segment(aes(x=manufacturer, xend=manufacturer, y=0, yend=mileage), color="grey") +
+  geom_point( color="orange", size=4) +
+  labs(y = "Avg. Mileage", x = "", title = "Lollipop Chart
+Average city mileage by manufacturer") +
+  theme(panel.grid.major.y = element_line(colour = "lightgrey"), 
+        panel.background = element_rect(fill = NA))
+```
+
+
+```{r Volcano Plot}
+library(readr)
+data_plot6 <- read_csv("C:/Users/majbai/Downloads/data_plot6.csv") # change path to your path
+View(data_plot6)
+
+# The plot
+ggplot(data=data_plot6, aes(x=log2FoldChange, y=-log10(pvalue), label=gene_symbol)) +
+  geom_point()
+
+```
+
